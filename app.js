@@ -19,11 +19,19 @@ app.use(bodyParser.json());
 app.set("view engine", "ejs");
 
 //ROUTE DEFAULT
-const defaultRouter = require("./routes/default");
-app.use("/", defaultRouter);
+const membershipRouter = require("./routes/membership");
+app.use("/", membershipRouter);
 
 //ROUTE PROFILE
 const profileRouter = require("./routes/profile");
 app.use("/profile", profileRouter);
+
+//ROUTE BANNER
+const bannerRouter = require("./routes/banner");
+app.use("/banner", bannerRouter);
+
+//ROUTE SERVICES
+const servicesRouter = require("./routes/services");
+app.use("/services", servicesRouter);
 
 module.exports = app;

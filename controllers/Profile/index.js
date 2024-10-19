@@ -8,6 +8,9 @@ const {
   uploadFileLocalServer,
   deleteFileLocalServer,
   destinationUnlink,
+  generateQueryUpdate,
+  sequelize,
+  Sequelize,
 } = require("../../helpers");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
@@ -23,7 +26,7 @@ exports.index = async (req, res) => {
     return customResponse({
       resStatus: data ? 200 : 201,
       status: data ? 0 : 108,
-      message: data ? "Sukses" : "Token tidak valid atau kadaluwarsa",
+      message: data ? "Sukses" : "Gagal",
       data,
       res,
     });
@@ -51,7 +54,18 @@ exports.update = async (req, res) => {
 
     const params = req.body;
     const currentUser = await getCurrentUser({ req });
-    const data = await currentUser.update(params);
+
+    const query_update = generateQueryUpdate("membership", params, {
+      id: currentUser.id,
+    });
+
+    const [results, data] = await sequelize.query(query_update, {
+      replacements: Object.assign({}, params, {
+        id: currentUser.id,
+      }),
+      type: Sequelize.QueryTypes.UPDATE,
+    });
+
     return customResponse({
       resStatus: data ? 200 : 401,
       message: `Update Pofile ${data ? "berhasil" : "gagal"}`,
@@ -63,6 +77,7 @@ exports.update = async (req, res) => {
       res,
     });
   } catch (error) {
+    console.log(error);
     return customResponse({
       resStatus: 400,
       status: 102,
@@ -102,7 +117,7 @@ exports.updateImage = async (req, res) => {
     }
 
     if (currentUser) {
-      const pecah = currentUser.dataValues.profile_image?.split("/");
+      const pecah = currentUser.profile_image?.split("/");
       const fileName = pecah && pecah.length && pecah[pecah.length - 1];
       if (file && upload.success && fileName) {
         const deleteFile = deleteFileLocalServer("", fileName);
@@ -117,7 +132,16 @@ exports.updateImage = async (req, res) => {
     const params = {
       profile_image: upload.fileURL,
     };
-    const data = await currentUser.update(params);
+    const query_update = generateQueryUpdate("membership", params, {
+      id: currentUser.id,
+    });
+
+    const [results, data] = await sequelize.query(query_update, {
+      replacements: Object.assign({}, params, {
+        id: currentUser.id,
+      }),
+      type: Sequelize.QueryTypes.UPDATE,
+    });
 
     return customResponse({
       res,
@@ -130,6 +154,7 @@ exports.updateImage = async (req, res) => {
       }),
     });
   } catch (error) {
+    console.log(error);
     return customResponse({
       resStatus: 400,
       status: 102,

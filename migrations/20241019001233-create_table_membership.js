@@ -3,60 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    /*
-    return queryInterface.createTable("membership", {
-      id: {
-        type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
-        primaryKey: true,
-        allowNull: false,
-      },
-      first_name: {
-        type: Sequelize.STRING(150),
-        allowNull: false,
-      },
-      last_name: {
-        type: Sequelize.STRING(150),
-        allowNull: false,
-      },
-      email: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      password: {
-        type: Sequelize.TEXT,
-        allowNull: false,
-      },
-      access_token: {
-        type: Sequelize.TEXT,
-        allowNull: true,
-      },
-      jwt_secret: {
-        type: Sequelize.TEXT,
-        allowNull: true,
-      },
-      created_on: {
-        allowNull: false,
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
-      },
-      updated_on: {
-        allowNull: false,
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
-      },
-      last_login: {
-        allowNull: true,
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
-      },
-      profile_image: {
-        type: Sequelize.TEXT,
-        allowNull: true,
-      },
-    });
-    */
-    return queryInterface.sequelize.query(`
+    return await queryInterface.sequelize.query(`
       CREATE TABLE membership (
         id uuid NOT NULL,
         first_name varchar(150) NOT NULL,
@@ -74,6 +21,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    return await queryInterface.dropTable("membership");
+    return await queryInterface.sequelize.query("DROP TABLE membership;");
   },
 };

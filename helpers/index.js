@@ -81,7 +81,7 @@ const verifyToken = async (req, res, next) => {
   });
 };
 
-const getCurrentUser = async ({ req, attributes }) => {
+const getCurrentUser = async ({ req, attributes = ["*"] }) => {
   const access_token =
     req.cookies.access_token ||
     (req.headers.authorization && req.headers.authorization.split(" ")[1]);
@@ -265,6 +265,22 @@ const generateQueryFindOne = (tableName, where, attributes) => {
   return query;
 };
 
+const generateQueryFindAll = (tableName, where, attributes) => {
+  let query = `Select ${attributes.join(",")} FROM ${tableName} `;
+  if (Object.keys(where).length > 0) {
+    query += `WHERE `;
+  }
+
+  const arrWhere = [];
+  Object.keys(where).map((key) => {
+    arrWhere.push(` ${key} = :${key}`);
+  });
+
+  query += arrWhere.join(" AND ");
+
+  return query;
+};
+
 const getTableColumn = async (tableName) => {
   const query = `
     SELECT column_name, data_type, is_nullable, column_default
@@ -294,4 +310,6 @@ module.exports = {
   generateQueryFindOne,
   getTableColumn,
   generateQueryUpdate,
+  Sequelize,
+  generateQueryFindAll,
 };

@@ -4,20 +4,23 @@
     "password": "123456789",
     "database": "nutech_test_api_programmer",
     "host": "127.0.0.1",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "timezone": "Asia/Jakarta"
   },
   "test": {
     "username": "root",
     "password": null,
     "database": "nutech_test_api_programmer",
     "host": "127.0.0.1",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "timezone": "Asia/Jakarta"
   },
   "production": {
     "username": "root",
     "password": null,
     "database": "nutech_test_api_programmer",
     "host": "127.0.0.1",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "timezone": "Asia/Jakarta"
   }
 }
