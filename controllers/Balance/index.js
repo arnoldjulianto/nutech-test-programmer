@@ -8,8 +8,9 @@ const {
 exports.index = async (req, res) => {
   try {
     const currentUser = await getCurrentUser({ req });
-    const query = `SELECT get_user_balance::int as balance FROM get_user_balance('${currentUser.id}')`;
+    const query = `SELECT get_user_balance::int as balance FROM get_user_balance(:id)`;
     const [data] = await sequelize.query(query, {
+      replacements: { id: currentUser.id },
       type: Sequelize.QueryTypes.SELECT,
     });
 
@@ -33,8 +34,9 @@ exports.index = async (req, res) => {
 
 exports.balance = async (id) => {
   try {
-    const query = `SELECT get_user_balance::int as balance FROM get_user_balance('${id}')`;
+    const query = `SELECT get_user_balance::int as balance FROM get_user_balance(:id)`;
     const [data] = await sequelize.query(query, {
+      replacements: { id },
       type: Sequelize.QueryTypes.SELECT,
     });
 
