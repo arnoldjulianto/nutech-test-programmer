@@ -67,7 +67,7 @@ exports.update = async (req, res) => {
     });
 
     return customResponse({
-      resStatus: data ? 200 : 401,
+      resStatus: data ? 200 : 400,
       message: `Update Pofile ${data ? "berhasil" : "gagal"}`,
       status: data ? 0 : 102,
       data: await getCurrentUser({

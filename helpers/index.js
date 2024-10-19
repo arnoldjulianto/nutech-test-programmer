@@ -248,13 +248,22 @@ const generateQueryUpdate = (tableName, params, where) => {
   return query;
 };
 
-const generateQueryFindOne = (tableName, where, attributes) => {
+const generateQueryFindOne = (tableName, where, attributes, join = []) => {
   let query = `Select ${attributes.join(",")} FROM ${tableName} `;
-  if (Object.keys(where).length > 0) {
-    query += `WHERE `;
-  }
+
+  const arrJoin = [];
+  join.map((val) => {
+    const tableName = val.tableName;
+    const condition = val.condition;
+    arrJoin.push(`JOIN ${tableName} ON ${condition}`);
+  });
+
+  query += arrJoin.join(" ");
 
   const arrWhere = [];
+  if (Object.keys(where).length > 0) {
+    query += ` WHERE `;
+  }
   Object.keys(where).map((key) => {
     arrWhere.push(` ${key} = :${key}`);
   });
@@ -296,6 +305,21 @@ const getTableColumn = async (tableName) => {
   return hasil;
 };
 
+const generateInvoiceNumber = async (req) => {
+  const currentUser = await getCurrentUser({ req });
+  const query = ` Select count(id)::int as total_invoice from transactions where invoice_number is not null LIMIT 1`;
+  const [lastInvoice] = await sequelize.query(query);
+  const newNumber =
+    lastInvoice.length > 0 && lastInvoice[0].total_invoice
+      ? lastInvoice[0].total_invoice + 1
+      : 1;
+
+  const invoice_number = `INV${currentUser.id.substring(0, 5)}${moment().format(
+    "DDMMYYYY"
+  )}-${newNumber}`;
+  return invoice_number;
+};
+
 module.exports = {
   verifyToken,
   formValidate,
@@ -312,4 +336,5 @@ module.exports = {
   generateQueryUpdate,
   Sequelize,
   generateQueryFindAll,
+  generateInvoiceNumber,
 };

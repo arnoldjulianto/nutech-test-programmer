@@ -19,7 +19,7 @@ exports.index = async (req, res) => {
 
     return customResponse({
       resStatus: data.length > 0 ? 200 : 201,
-      status: data.length > 0 ? 0 : 108,
+      status: data.length > 0 ? 0 : 102,
       message: data.length > 0 ? "Sukses" : "Gagal",
       data,
       res,

@@ -34,4 +34,16 @@ app.use("/banner", bannerRouter);
 const servicesRouter = require("./routes/services");
 app.use("/services", servicesRouter);
 
+//ROUTE BALANCE
+const balanceRouter = require("./routes/balance");
+app.use("/balance", balanceRouter);
+
+//ROUTE TOP UP
+const topUpRouter = require("./routes/top-up");
+app.use("/topup", topUpRouter);
+
+//ROUTE TRANSACTION
+const transactionRouter = require("./routes/transaction");
+app.use("/transaction", transactionRouter);
+
 module.exports = app;
