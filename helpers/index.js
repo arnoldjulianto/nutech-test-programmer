@@ -8,6 +8,7 @@ const fs = require("fs");
 const { Sequelize } = require("sequelize");
 const { v4: uuidv4 } = require("uuid");
 const moment = require("moment");
+const { off } = require("process");
 
 const sequelize = new Sequelize(
   process.env.DBName,
@@ -274,7 +275,14 @@ const generateQueryFindOne = (tableName, where, attributes, join = []) => {
   return query;
 };
 
-const generateQueryFindAll = (tableName, where, attributes) => {
+const generateQueryFindAll = (
+  tableName,
+  where,
+  attributes,
+  order,
+  limit,
+  offset
+) => {
   let query = `Select ${attributes.join(",")} FROM ${tableName} `;
   if (Object.keys(where).length > 0) {
     query += `WHERE `;
@@ -286,6 +294,26 @@ const generateQueryFindAll = (tableName, where, attributes) => {
   });
 
   query += arrWhere.join(" AND ");
+
+  const arrOrder = [];
+  if (order) {
+    query += ` ORDER BY `;
+    order.map((val) => {
+      const order_by = val.order_by;
+      const order_type = val.order_type;
+      arrOrder.push(` ${order_by} ${order_type}`);
+    });
+  }
+  query += arrOrder.join(",");
+
+  if (limit && limit.length) {
+    query += ` LIMIT ${limit}`;
+  }
+
+  if (offset && offset.length) {
+    offset = offset * limit;
+    query += ` OFFSET ${offset}`;
+  }
 
   return query;
 };
@@ -307,7 +335,7 @@ const getTableColumn = async (tableName) => {
 
 const generateInvoiceNumber = async (req) => {
   const currentUser = await getCurrentUser({ req });
-  const query = ` Select count(id)::int as total_invoice from transactions where invoice_number is not null LIMIT 1`;
+  const query = ` Select count(id)::int as total_invoice from transactions  LIMIT 1`;
   const [lastInvoice] = await sequelize.query(query);
   const newNumber =
     lastInvoice.length > 0 && lastInvoice[0].total_invoice

@@ -7,9 +7,69 @@ const {
   generateQueryInsert,
   generateQueryFindOne,
   generateInvoiceNumber,
+  generateQueryFindAll,
 } = require("../../helpers");
 const balanceController = require("../../controllers/Balance");
 const moment = require("moment");
+
+exports.history = async (req, res) => {
+  try {
+    const currentUser = await getCurrentUser({ req });
+    const limit = req.query.limit;
+    const offset = req.query.offset;
+
+    const query = generateQueryFindAll(
+      "transactions",
+      {
+        membership_id: currentUser.id,
+      },
+      [
+        "invoice_number",
+        "transaction_type",
+        "description",
+        "total_amount",
+        "created_on",
+      ],
+      [
+        {
+          order_by: "created_on",
+          order_type: "DESC",
+        },
+      ],
+      limit ?? "",
+      offset ?? ""
+    );
+
+    const records = await sequelize.query(query, {
+      replacements: {
+        membership_id: currentUser.id,
+      },
+      type: Sequelize.QueryTypes.SELECT,
+    });
+
+    const data = {
+      limit,
+      offset,
+      records,
+    };
+
+    return customResponse({
+      res,
+      data,
+      resStatus: records.length > 0 ? 200 : 400,
+      status: records.length > 0 ? 0 : 102,
+      message: `Get History ${records.length > 0 ? "Berhasil" : "Gagal"}`,
+    });
+  } catch (error) {
+    console.log(error);
+    return customResponse({
+      resStatus: 400,
+      status: 102,
+      message: error && error.message ? error.message : "Terjadi Kesalahan",
+      res,
+    });
+  }
+};
 
 exports.store = async (req, res) => {
   try {

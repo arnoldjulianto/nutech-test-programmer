@@ -5,6 +5,7 @@ const {
   Sequelize,
   formValidate,
   generateQueryInsert,
+  generateInvoiceNumber,
 } = require("../../helpers");
 const balanceController = require("../../controllers/Balance");
 
@@ -26,6 +27,7 @@ exports.store = async (req, res) => {
     params.membership_id = currentUser.id;
     params.description = "Top Up balance";
     params.total_amount = params.top_up_amount;
+    params.invoice_number = await generateInvoiceNumber(req);
     delete params.top_up_amount;
 
     const query = generateQueryInsert("transactions", params);
