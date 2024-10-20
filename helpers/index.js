@@ -10,15 +10,16 @@ const { v4: uuidv4 } = require("uuid");
 const moment = require("moment");
 const { off } = require("process");
 
-const sequelize = new Sequelize(
-  process.env.DBName,
-  process.env.DBUsername,
-  process.env.DBPassword,
-  {
-    host: "localhost",
-    dialect: "postgres", // or 'mysql', 'sqlite', etc.
-  }
-);
+// const sequelize = new Sequelize(
+//   process.env.DBName,
+//   process.env.DBUsername,
+//   process.env.DBPassword,
+//   {
+//     host: "localhost",
+//     dialect: "postgres", // or 'mysql', 'sqlite', etc.
+//   }
+// );
+const sequelize = new Sequelize(process.env.DB_URI);
 
 const destinationUpload = __dirname + "../../public";
 const publicPath = path.join(__dirname, "../public/");
